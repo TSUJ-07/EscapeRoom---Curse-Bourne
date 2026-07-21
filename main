@@ -127,7 +127,9 @@ int main(){
                                     //start puzzle 3 logic here
                                     printf("What is the password to escape?\n");
                                     printf("Hint: The password is a 4 digit number with alternating zero values.\n");
-                                    printf("Example: '_0_0' etc.\n");
+                                    printf("The desired PIN will have the same repeated first digit\n");
+                                    printf("Select any value from 1 to 9\n");
+                                    printf("Example: '_0_0'\n");
                                     int user_input;
                                     printf("Enter specified pattern: ");
                                     scanf("%d", &user_input);
