@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <string.h>
+typedef enum{
+    STATE_MENU,
+    STATE_CHAR,
+    STATE_EXPLORE, 
+    STATE_WIN}State;
+
+struct Player{
+    char name[20];  // Player's name: string
+    int difficulty; // Difficulty level: 0 for easy, 1 for hard : integer
+    int room;       // Current position: 0 for Room A, 1 for Room B : integer
+    int collected_cards;    // Counter for # of cards collected: integer
+} player={"", 0, 0, 0};    // Initial player default values: (name, difficulty, room, collected_cards)
+
+void Map(){
+    printf("MAP\n");
+    if (player.room==0){
+        printf("[*Position: Room A] ------ [Room B]\n");
+    }
+        else{
+            printf("[Room A] ------ [*Position: Room B]\n");
+        }
+    printf("Collected Cards: %d\n", player.collected_cards);
+}
+
+int main(){
+    State current_state=STATE_MENU;
+    char input;
+
+    while(1){
+        switch(current_state){
+            case STATE_MENU:
+                printf("Welcome to the Main Menu!\n");
+                printf("Press '1' to Start the Game: ");
+                printf("Press 'q' to Quit the Game: ");
+                scanf(" %c", &input);
+                if (input=='1') current_state=STATE_CHAR;
+                else if (input=='q') return 0;
+                break;
+
+            case STATE_CHAR:
+                printf("Enter your character name: ");
+                scanf("%19s", player.name);
+                printf("Select Difficulty (0 = Easy, 1 = Hard): ");
+                scanf(" %d", &player.difficulty);
+                current_state=STATE_EXPLORE;
+                break;
+
+            case STATE_EXPLORE:
+                printf("You are currently in Room %c\n", player.room == 0 ? 'A' : 'B');
+                if (player.room==0){
+                    printf("Press 'm' to view the map, 'n' to move to Room B, 'p' to attempt a puzzle in Room B: ");
+                }
+                else{
+                    printf("Press 'm' to view the map, 'n' to move to Room A, 'p' to attempt a puzzle in Room B: ");
+                }
+                scanf(" %c", &input);
+                if (input=='m') Map();
+                else if (input=='n') player.room = !player.room;
+                else if(input=='p'){
+                    if(player.room==1){
+                            if (player.collected_cards==0){
+                                printf("-----PUZZLE 1------\n");
+                                printf("BEGIN PUZZLE 1? (y/n): ");
+                                scanf(" %c", &input);
+                                if (input=='y'||input=='Y'){
+                                    //start puzzle 1 logic here
+                                    printf("Puzzle 1 Solved! Card collected!\n");
+                                    player.collected_cards++;
+                                }
+                                else{
+                                    printf("Returning to exploration...\n");
+                                }
+                            }
+                            else if (player.collected_cards==1){
+                                printf("-----PUZZLE 2------\n");
+                                printf("BEGIN PUZZLE 2? (y/n): ");
+                                scanf(" %c", &input);
+                                if (input=='y'||input=='Y'){
+                                    //start puzzle 2 logic here
+                                    printf("Puzzle 2 Solved! Card collected!\n");
+                                    player.collected_cards++;
+                                }
+                                else{
+                                    printf("Returning to exploration...\n");
+                                }
+                            }
+                            else if (player.collected_cards==2){
+                                printf("-----PUZZLE 3------\n");
+                                printf("BEGIN PUZZLE 3? (y/n): ");
+                                scanf(" %c", &input);
+                                if (input=='y'||input=='Y'){
+                                    //start puzzle 3 logic here
+                                    printf("Puzzle 3 Solved! Card collected!\n");
+                                    player.collected_cards++;
+                                    if(player.collected_cards>=3) current_state=STATE_WIN;
+                                }
+                                else{
+                                    printf("Returning to exploration...\n");
+                                }
+                            }
+                            else{
+                                printf("All puzzles completed! You can now escape!\n");
+                            }
+                    }
+                    else if(player.room==0){
+                        printf("-----Invalid Input: Only use 'p' in Room B!------\n");
+                    }
+                }
+                break;
+        
+            case STATE_WIN:
+                printf("You Have Won The Game, %s!\n", player.name);
+                return 0;
+        }
+    }
+    return 0;
+}
