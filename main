@@ -13,6 +13,11 @@ struct Player{
     int collected_cards;    // Counter for # of cards collected: integer
 } player={"", 0, 0, 0};    // Initial player default values: (name, difficulty, room, collected_cards)
 
+//Establish the external Assembly function for the puzzles
+extern int puzzle_bitmaster(int input, int difficulty);
+extern int puzzle_mathriddle(int input, int difficulty);
+extern int puzzle_password(int input, int difficulty);
+
 void Map(){
     printf("MAP\n");
     if (player.room==0){
@@ -66,8 +71,22 @@ int main(){
                                 scanf(" %c", &input);
                                 if (input=='y'||input=='Y'){
                                     //start puzzle 1 logic here
-                                    printf("Puzzle 1 Solved! Card collected!\n");
-                                    player.collected_cards++;
+                                    if (player.difficulty==0){
+                                        printf("Riddle: What is the 4 bit conguration of value 1?\n");
+                                    }
+                                    else if (player.difficulty==1){
+                                        printf("Riddle: What is the 4 bit configuration of value 8?\n");
+                                    }
+                                    int user_input;
+                                    printf("Enter integer value: ");
+                                    scanf("%d", &user_input);
+                                    if (puzzle_bitmaster(user_input, player.difficulty)){
+                                        printf("Puzzle 1 Solved! Card collected!\n");
+                                        player.collected_cards++;
+                                    }
+                                    else{
+                                        printf("Incorrect answer. Returning to exploration...\n");
+                                    }
                                 }
                                 else{
                                     printf("Returning to exploration...\n");
@@ -79,8 +98,22 @@ int main(){
                                 scanf(" %c", &input);
                                 if (input=='y'||input=='Y'){
                                     //start puzzle 2 logic here
-                                    printf("Puzzle 2 Solved! Card collected!\n");
-                                    player.collected_cards++;
+                                    if (player.difficulty==0){
+                                        printf("What is 3*12?");
+                                    }                                        
+                                    else if (player.difficulty==1){
+                                        printf("What is 8*12?");
+                                    }
+                                    int user_input;
+                                    printf("Enter integer value: ");
+                                    scanf("%d", &user_input);
+                                    if (puzzle_mathriddle(user_input, player.difficulty)){
+                                        printf("Puzzle 2 Solved! Card collected!\n");
+                                        player.collected_cards++;
+                                    }
+                                    else{
+                                        printf("Incorrect answer. Returning to exploration...\n");
+                                    }
                                 }
                                 else{
                                     printf("Returning to exploration...\n");
@@ -92,8 +125,19 @@ int main(){
                                 scanf(" %c", &input);
                                 if (input=='y'||input=='Y'){
                                     //start puzzle 3 logic here
-                                    printf("Puzzle 3 Solved! Card collected!\n");
-                                    player.collected_cards++;
+                                    printf("What is the password to escape?\n");
+                                    printf("Hint: The password is a 4 digit number with alternating zero values.\n");
+                                    printf("Example: '_0_0' etc.\n");
+                                    int user_input;
+                                    printf("Enter specified pattern: ");
+                                    scanf("%d", &user_input);
+                                    if (puzzle_password(user_input, player.difficulty)){
+                                        printf("Puzzle 3 Solved! Card collected!\n");
+                                        player.collected_cards++;
+                                    }
+                                    else{
+                                        printf("Incorrect answer. Returning to exploration...\n");
+                                    }
                                     if(player.collected_cards>=3) current_state=STATE_WIN;
                                 }
                                 else{
