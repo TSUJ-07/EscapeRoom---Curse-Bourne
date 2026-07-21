@@ -11,22 +11,93 @@ struct Player{
     int difficulty; // Difficulty level: 0 for easy, 1 for hard : integer
     int room;       // Current position: 0 for Room A, 1 for Room B : integer
     int collected_cards;    // Counter for # of cards collected: integer
-} player={"", 0, 0, 0};    // Initial player default values: (name, difficulty, room, collected_cards)
+    int puzzle_attempts; // Counter for # of puzzle attempts: integer
+} player={"", 0, 0, 0, 0};    // Initial player default values: (name, difficulty, room, collected_cards)
+
+// Function handlew attempts based on difficulty
+int AttemptCount(int (*puzzle_func)(int, int), int difficulty){
+    int attempts = (difficulty == 0) ? 3 : 1;   // is dificulty true to zero, then attempts==3, else attempts==1
+    int user_input;
+
+    if (difficulty == 1){
+        printf("[HARD MODE: You only get 1 attempt.]\n");
+    }
+
+    while (attempts > 0){
+        if (difficulty == 0) {
+            printf("[EASY MODE: %d attempt(s) remaining]\n", attempts);
+        }
+
+        printf("Enter integer value: ");
+        scanf(" %d", &user_input);
+
+        // Call the Assembly puzzle function
+        if (puzzle_func(user_input, difficulty)) {
+            return 1; // Completed
+        }
+
+        attempts--;
+        if (attempts > 0) {
+            printf("Incorrect answer! Try again.\n\n");
+        }
+    }
+
+    printf("0 attempts remaining. Returning to exploration...\n");
+    return 0; // Failed
+}
 
 //Establish the external Assembly function for the puzzles
 extern int puzzle_bitmaster(int input, int difficulty);
 extern int puzzle_mathriddle(int input, int difficulty);
 extern int puzzle_password(int input, int difficulty);
 
+void TitleBanner(){
+    printf("\n");
+    printf("  ███████ ███████  ██████  █████  ██████  ███████\n");
+    printf("  ██      ██      ██      ██   ██ ██   ██ ██     \n");
+    printf("  █████   ███████ ██      ███████ ██████  █████  \n");
+    printf("  ██           ██ ██      ██   ██ ██      ██     \n");
+    printf("  ███████ ███████  ██████ ██   ██ ██      ███████\n");
+    printf("\n");
+}
+
 void Map(){
     printf("MAP\n");
     if (player.room==0){
-        printf("[*Position: Room A] ------ [Room B]\n");
+        printf("[**Position: Room A] -------------- [Room B]\n");
+        printf("  ██████████████████                        \n");
+        printf("  ███├├├├├├├├├├├├███     ██████████████████ \n");
+        printf("  █├├├├├    ├├├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  █├├ [**YOU] ├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤███ \n");
+        printf("  █├├├├├   ├├├├├├├├█     █┤┤┤┤ (ROOM B)┤███ \n");
+        printf("  █├├├├├├├├├├├├├├████████┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├████████┤┤┤┤┤┤[P]┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├████████┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤███ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤███ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  ██├├├├(ROOM A)├├├█     ██████████████████ \n");
+        printf("   ██├├├├├├├├├├├├███                        \n");
+        printf("     █████████████                          \n");
     }
-        else{
-            printf("[Room A] ------ [*Position: Room B]\n");
-        }
-    printf("Collected Cards: %d\n", player.collected_cards);
+    else{
+        printf("[Room A] -------------- [**Position: Room B]\n");
+        printf("  ██████████████████                        \n");
+        printf("  ███├├├├├├├├├├├├███     ██████████████████ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤┤┤┤┤┤┤┤███ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤(ROOM B)┤███ \n");
+        printf("  █├├├├├├├├├├├├├├████████┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├████████┤┤┤┤┤┤[P]┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├████████┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤┤██ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤     ┤┤███ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤[**YOU]┤┤███ \n");
+        printf("  █├├├├├├├├├├├├├├├├█     █┤┤┤┤┤┤┤    ┤┤┤┤██ \n");
+        printf("  ██├├├├(ROOM A)├├├█     ██████████████████ \n");
+        printf("   ██├├├├├├├├├├├├███                        \n");
+        printf("     █████████████                          \n");
+    }
+    printf("@Collected Cards: %d\n", player.collected_cards);
 }
 
 int main(){
@@ -36,6 +107,7 @@ int main(){
     while(1){
         switch(current_state){
             case STATE_MENU:
+                TitleBanner();
                 printf("Welcome to the Main Menu!\n");
                 printf("Press '1' to Start the Game: ");
                 printf("Press 'q' to Quit the Game: ");
@@ -55,10 +127,14 @@ int main(){
             case STATE_EXPLORE:
                 printf("You are currently in Room %c\n", player.room == 0 ? 'A' : 'B');
                 if (player.room==0){
-                    printf("Press 'm' to view the map, 'n' to move to Room B, 'p' to attempt a puzzle in Room B: ");
+
+                    printf("You are in Room A. There is a door on the right leading to Room B.\n");
+                    printf("Press 'm' to view the map, 'n' to move to Room B, 'p' to attempt a puzzle: ");
                 }
                 else{
-                    printf("Press 'm' to view the map, 'n' to move to Room A, 'p' to attempt a puzzle in Room B: ");
+
+                    printf("You are in Room B. There is a door on the left leading to Room A.\n");
+                    printf("Press 'm' to view the map, 'n' to move to Room A, 'p' to attempt a puzzle: ");
                 }
                 scanf(" %c", &input);
                 if (input=='m') Map();
@@ -77,15 +153,17 @@ int main(){
                                     else if (player.difficulty==1){
                                         printf("Riddle: What is the 4 bit configuration of value 8?\n");
                                     }
-                                    int user_input;
-                                    printf("Enter integer value: ");
-                                    scanf("%d", &user_input);
-                                    if (puzzle_bitmaster(user_input, player.difficulty)){
+
+                                    if (AttemptCount(puzzle_bitmaster, player.difficulty)){
+                                        printf("\n");
+                                        printf("├────*─────*────*────┤\n");
+                                        printf("├     *    *     *   ┤\n");
+                                        printf("├  KeyCard 1 * *  * ┤\n");
+                                        printf("├      *     *     *┤\n");
+                                        printf("├───────*─────*─────*┤\n");
                                         printf("Puzzle 1 Solved! Card collected!\n");
+                                        printf("\n");
                                         player.collected_cards++;
-                                    }
-                                    else{
-                                        printf("Incorrect answer. Returning to exploration...\n");
                                     }
                                 }
                                 else{
@@ -99,20 +177,22 @@ int main(){
                                 if (input=='y'||input=='Y'){
                                     //start puzzle 2 logic here
                                     if (player.difficulty==0){
-                                        printf("What is 3*12?");
+                                        printf("What is 3*12?\n");
                                     }                                        
                                     else if (player.difficulty==1){
-                                        printf("What is 8*12?");
+                                        printf("What is 8*12?\n");
                                     }
-                                    int user_input;
-                                    printf("Enter integer value: ");
-                                    scanf("%d", &user_input);
-                                    if (puzzle_mathriddle(user_input, player.difficulty)){
+
+                                    if (AttemptCount(puzzle_mathriddle, player.difficulty)){
+                                        printf("\n");
+                                        printf("├────*─────*────*────┤\n");
+                                        printf("├     *    *     *   ┤\n");
+                                        printf("├  KeyCard 2 * *  * ┤\n");
+                                        printf("├      *     *     *┤\n");
+                                        printf("├───────*─────*─────*┤\n");
+                                        printf("\n");
                                         printf("Puzzle 2 Solved! Card collected!\n");
                                         player.collected_cards++;
-                                    }
-                                    else{
-                                        printf("Incorrect answer. Returning to exploration...\n");
                                     }
                                 }
                                 else{
@@ -130,17 +210,19 @@ int main(){
                                     printf("The desired PIN will have the same repeated first digit\n");
                                     printf("Select any value from 1 to 9\n");
                                     printf("Example: '_0_0'\n");
-                                    int user_input;
-                                    printf("Enter specified pattern: ");
-                                    scanf("%d", &user_input);
-                                    if (puzzle_password(user_input, player.difficulty)){
+                                    
+                                    if (AttemptCount(puzzle_password, player.difficulty)){
+                                        printf("\n");
+                                        printf("├────*─────*────*────┤\n");
+                                        printf("├     *    *     *   ┤\n");
+                                        printf("├  KeyCard 3 * *  * ┤\n");
+                                        printf("├      *     *     *┤\n");
+                                        printf("├───────*─────*─────*┤\n");
+                                        printf("\n");
                                         printf("Puzzle 3 Solved! Card collected!\n");
                                         player.collected_cards++;
+                                        current_state=STATE_WIN;
                                     }
-                                    else{
-                                        printf("Incorrect answer. Returning to exploration...\n");
-                                    }
-                                    if(player.collected_cards>=3) current_state=STATE_WIN;
                                 }
                                 else{
                                     printf("Returning to exploration...\n");
@@ -148,6 +230,7 @@ int main(){
                             }
                             else{
                                 printf("All puzzles completed! You can now escape!\n");
+                                current_state=STATE_WIN;
                             }
                     }
                     else if(player.room==0){
@@ -157,6 +240,14 @@ int main(){
                 break;
         
             case STATE_WIN:
+                printf("\n");
+                printf("  db   db  .d88b.  db   db      db   d8b   db d888888b d8b   db db \n");
+                printf("  `8b d8' .8P  Y8. 88   88      88   I8I   88   `88'   888o  88 88 \n");
+                printf("   `8bd8'  88    88 88   88      88   I8I   88    88    88V8o 88 YP \n");
+                printf("     88    88    88 88   88      Y8   I8I   88    88    88 V8o88    \n");
+                printf("     88    `8b  d8' 88b  d88      `8b d8'8b d8'   .88.   88  V888 db \n");
+                printf("     YP     `Y88P'  ~Y8888P'       `8b8' `8d8'  Y888888P VP   V8P YP \n");
+                printf("\n");
                 printf("You Have Won The Game, %s!\n", player.name);
                 return 0;
         }
